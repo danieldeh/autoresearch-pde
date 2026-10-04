@@ -1153,6 +1153,31 @@ def v3_lorenz():
             f"- **Agent cost:** ${c.get('cost_usd') or 0:.2f}.")
 
 
+@st.cache_data(show_spinner=False)
+def _pendulums_html():
+    """demo/showcase/parallel-pendulums/index.html with its video, poster and model file inlined, so the page's
+    relative links work inside the Streamlit iframe. The page stays the single source of truth."""
+    import base64
+    import re
+    d = SHOW / "parallel-pendulums"
+    b64 = lambda f: base64.b64encode((d / f).read_bytes()).decode()
+    page = (d / "index.html").read_text()
+    page = re.sub(r"<source src=\"video\.mp4\".*?</video>",
+                  lambda m: f'<source src="data:video/mp4;base64,{b64("parallel-pendulums-dynamics.mov")}" type="video/mp4">'
+                            "</video>", page, flags=re.S)                  # H.264 in a MOV: same container family as MP4
+    page = page.replace('poster="thumb.jpg"', f'poster="data:image/jpeg;base64,{b64("thumb.jpg")}"')
+    page = page.replace('href="model.json"', f'href="data:application/json;base64,{b64("model.json")}" download="model.json"')
+    page = re.sub(r"\s*Video without a browser player:.*?</a>\.", "", page, flags=re.S)   # would duplicate the video bytes
+    return page
+
+
+def v3_pendulums():
+    if not (SHOW / "parallel-pendulums" / "index.html").exists():
+        return st.warning("demo/showcase/parallel-pendulums/index.html is missing.")
+    import streamlit.components.v1 as components
+    components.html(_pendulums_html(), height=2900, scrolling=True)
+
+
 def v3_home():
     st.markdown("<div class='home-e'>Lorenz</div><div class='home-t'>Equation Discovery AutoScientist</div>"
                 "<div class='home-s'>Data in. Out come the equation, how sure it is, and where to measure next.</div>",
@@ -1160,7 +1185,8 @@ def v3_home():
     cards = [("lageos", "Satellite", V3_PAGES["sat"]), ("orbit", "Big Bulge Orbit", V3_PAGES["bulge"]),
              ("ks", "Blind Chaos (KS)", V3_PAGES["chaos"]), ("gray_scott", "Reaction-Diffusion (Chemistry)", V3_PAGES["rd"]),
              ("hidden_oscillator", "Hidden Oscillator", V3_PAGES["hidden"]),
-             ("lorenz", "Lorenz (In vs Out of Sample)", V3_PAGES["lorenz"])]
+             ("lorenz", "Lorenz (In vs Out of Sample)", V3_PAGES["lorenz"]),
+             ("parallel-pendulums", "Parallel Pendulums (from video)", V3_PAGES["pendulums"])]
     cols = [c for _ in range(0, len(cards), 3) for c in st.columns(3, gap="large")]
     for c, (case, name, page) in zip(cols, cards):
         with c, st.container(border=True):
@@ -1445,6 +1471,8 @@ def main():
                       url_path="reaction-diffusion"),
         "hidden": st.Page(v3_hidden, title="Hidden Oscillator", icon=":material/graphic_eq:", url_path="hidden-oscillator"),
         "lorenz": st.Page(v3_lorenz, title="Lorenz (In vs Out of Sample)", icon=":material/all_inclusive:", url_path="lorenz"),
+        "pendulums": st.Page(v3_pendulums, title="Parallel Pendulums (from video)", icon=":material/videocam:",
+                             url_path="parallel-pendulums"),
         "evidence": st.Page(evidence.page, title="When Not to Trust It", icon=":material/gpp_maybe:",
                             url_path="when-not-to-trust-it"),
         "yours": st.Page(v3_yourdata, title="Your Data", icon=":material/upload_file:", url_path="your-data"),
