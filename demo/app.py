@@ -1444,19 +1444,10 @@ def main():
         "rd": st.Page(v3_reaction, title="Reaction-Diffusion (Chemistry)", icon=":material/texture:",
                       url_path="reaction-diffusion"),
         "hidden": st.Page(v3_hidden, title="Hidden Oscillator", icon=":material/graphic_eq:", url_path="hidden-oscillator"),
-        "evidence": st.Page(evidence.page, title="When Not to Trust It", icon=":material/gpp_maybe:",
-                            url_path="when-not-to-trust-it"),
-        "yours": st.Page(v3_yourdata, title="Your Data", icon=":material/upload_file:", url_path="your-data"),
-
-        "home": st.Page(v3_home, title="Home", default=True),
-        "sat": st.Page(v3_satellite, title="Satellite", url_path="satellite"),
-        "bulge": st.Page(v3_bulge, title="Big Bulge Orbit", url_path="big-bulge-orbit"),
-        "chaos": st.Page(v3_chaos, title="Blind Chaos (KS)", url_path="blind-chaos"),
-        "rd": st.Page(v3_reaction, title="Reaction-Diffusion (Chemistry)", url_path="reaction-diffusion"),
         "lorenz": st.Page(v3_lorenz, title="Lorenz (In vs Out of Sample)", icon=":material/all_inclusive:", url_path="lorenz"),
         "evidence": st.Page(evidence.page, title="When Not to Trust It", icon=":material/gpp_maybe:",
                             url_path="when-not-to-trust-it"),
-        "yours": st.Page(v3_yourdata, title="Your Data", url_path="your-data"),
+        "yours": st.Page(v3_yourdata, title="Your Data", icon=":material/upload_file:", url_path="your-data"),
     })
     nav = st.navigation(list(V3_PAGES.values()), position="top")
     nav.run()
